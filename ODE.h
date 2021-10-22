@@ -4,8 +4,10 @@
 
 #ifndef VMLAB6_ODE_H
 #define VMLAB6_ODE_H
+
 #include <vector>
 #include <functional>
+
 typedef std::vector<std::pair<double, double>> data_t;
 
 /*
@@ -19,14 +21,18 @@ data_t euler(double a,
              double h,
              double alpha,
              double eps,
-             const std::function<double(double, double)>& f);
+             const std::function<double(double, double)> &f);
+
 data_t runge(double a,
              double b,
              double h,
              double alpha,
              double eps,
-             const std::function<double(double, double)>& f);
+             const std::function<double(double, double)> &f);
+
 //F - функция точного аналитического решения
-void print_table(const data_t &data, std::function<double(double, double)> f, std::function<double(double)> F);
+void print_table(const data_t &data,
+                 const std::function<double(double, double)> &f,
+                 const std::function<double(double)> &F);
 
 #endif //VMLAB6_ODE_H

@@ -7,16 +7,17 @@
 using namespace std;
 
 //данное ОДУ y'=f(x, y)
-double f(double x, double y){
-    return y+(1+x)*pow(y,2);
+double f(double x, double y) {
+    return y + (1 + x) * pow(y, 2);
 }
+
 //точное аналитическое решение данного выше уравнения при y(1)=1
-double F(double x){
-    return -1/x;
+double F(double x) {
+    return -1 / x;
 }
 
 int main() {
-    double a=1, b=1.5, h=0.1, alpha=-1, eps=0.01;
+    double a = 1, b = 1.5, h = 0.1, alpha = -1, eps = 0.01;
 
     cout << "Метод Эйлера: " << endl;
     data_t eulerData = euler(a, b, h, alpha, eps, f);
@@ -31,11 +32,11 @@ int main() {
 
     //строим точки для точного решения
     data_t exactData;
-    int n = (int)((b-a)/(h/EXACT_SMOOTH));
-    double x=a;
-    for (int i=0; i<n; i++){
+    int n = (int) ((b - a) / (h / EXACT_SMOOTH));
+    double x = a;
+    for (int i = 0; i < n; i++) {
         exactData.emplace_back(x, F(x));
-        x+=h/EXACT_SMOOTH;
+        x += h / EXACT_SMOOTH;
     }
 
     Gnuplot gp;
