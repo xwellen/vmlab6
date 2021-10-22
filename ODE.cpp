@@ -7,55 +7,76 @@
 //Метод Эйлера
 data_t euler(double a,
              double b,
-             double h,
+             double h1,
              double alpha,
+             double eps,
              const std::function<double(double, double)>& f) {
     data_t data_euler;
-    data_euler.clear();
-    double xi = a;
-    double yi = alpha;
-    int n = (int) (round((b - a) / h));
-    data_euler.emplace_back(xi, yi);
-    for (int i = 0; i < n; i++) {
-        yi += h * f(xi, alpha);
-        xi += h;
+    double h = h1;
+    while (true){
+        data_euler.clear();
+        double xi = a;
+        double yi = alpha;
+        int n = (int) (round((b - a) / h));
         data_euler.emplace_back(xi, yi);
-        alpha = yi;
+        double maximum_error = -1;
+        for (int i = 0; i < n; i++) {
+            yi += h * f(xi, yi);
+            xi += h;
+            data_euler.emplace_back(xi, yi);
+            if (data_euler.size()>1){
+                double s1 = data_euler[data_euler.size()-1].second;
+                double s2 = data_euler[data_euler.size()-2].second;
+                double error = abs(s1-s2);
+                maximum_error = std::max(maximum_error, error);
+            }
+        }
+        if (maximum_error <= eps) return data_euler;
+        else h /= 2;
     }
-    return data_euler;
 }
 
 //Метод Рунге-Кутта 4-го порядка
 data_t runge(double a,
              double b,
-             double h,
+             double h1,
              double alpha,
+             double eps,
              const std::function<double(double, double)>& f) {
-    double n = (b - a) / h;
-    double X[(int) n];
-    double Y1[(int) n];
-    double Y2[(int) n];
-    double Y3[(int) n];
-    double Y4[(int) n];
-    double Y[(int) n];
+    double h = h1;
     //calculate
-    X[0] = a;
-    Y[0] = alpha;
-    for (int i = 1; i <= n; i++) {
-        X[i] = a + i * h;
-        Y1[i] = h * f(X[i - 1], Y[i - 1]);
-        Y2[i] = h * f(X[i - 1] + h / 2.0, Y[i - 1] + Y1[i] / 2.0);
-        Y3[i] = h * f(X[i - 1] + h / 2, Y[i - 1] + Y2[i] / 2);
-        Y4[i] = h * f(X[i - 1] + h, Y[i - 1] + Y3[i]);
-        Y[i] = Y[i - 1] + (Y1[i] + 2 * Y2[i] + 2 * Y3[i] + Y4[i]) / 6;
+    while (true){
+        double n = (b - a) / h;
+        double X[(int) n];
+        double Y1[(int) n];
+        double Y2[(int) n];
+        double Y3[(int) n];
+        double Y4[(int) n];
+        double Y[(int) n];
+        X[0] = a;
+        Y[0] = alpha;
+        double maximum_error = -1;
+        for (int i = 1; i <= n; i++) {
+            X[i] = a + i * h;
+            Y1[i] = h * f(X[i - 1], Y[i - 1]);
+            Y2[i] = h * f(X[i - 1] + h / 2.0, Y[i - 1] + Y1[i] / 2.0);
+            Y3[i] = h * f(X[i - 1] + h / 2, Y[i - 1] + Y2[i] / 2);
+            Y4[i] = h * f(X[i - 1] + h, Y[i - 1] + Y3[i]);
+            Y[i] = Y[i - 1] + (Y1[i] + 2 * Y2[i] + 2 * Y3[i] + Y4[i]) / 6;
+            maximum_error = std::max(maximum_error, abs(Y[i]-Y[i-1]));
+        }
+        if (maximum_error * (1/15.) <= eps){
+            data_t data_runge;
+            for (int i = 0; i <= n; i++) {
+                data_runge.emplace_back(X[i], Y[i]);
+            }
+            data_runge[0].first = a;
+            return data_runge;
+        }
+        else{
+            h /= 2;
+        }
     }
-    data_t data_runge;
-    data_runge.clear();
-    for (int i = 0; i <= n; i++) {
-        data_runge.emplace_back(X[i], Y[i]);
-    }
-    data_runge[0].first = a;
-    return data_runge;
 }
 
 void print_table(const data_t &data,

@@ -14,8 +14,18 @@ h - шаг
 alpha - начальные условия y(a)=alpha
 f - функция данного ОДУ
 */
-data_t euler(double a, double b, double h, double alpha, const std::function<double(double, double)>& f);
-data_t runge(double a, double b, double h, double alpha, const std::function<double(double, double)>& f);
+data_t euler(double a,
+             double b,
+             double h,
+             double alpha,
+             double eps,
+             const std::function<double(double, double)>& f);
+data_t runge(double a,
+             double b,
+             double h,
+             double alpha,
+             double eps,
+             const std::function<double(double, double)>& f);
 //F - функция точного аналитического решения
 void print_table(const data_t &data, std::function<double(double, double)> f, std::function<double(double)> F);
 
